@@ -1,5 +1,6 @@
 package nl.tudelft.jpacman;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,16 +17,19 @@ import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.game.Game;
 import nl.tudelft.jpacman.game.GameFactory;
 import nl.tudelft.jpacman.level.*;
+import nl.tudelft.jpacman.npc.ghost.GhostColor;
 import nl.tudelft.jpacman.npc.ghost.GhostFactory;
 import nl.tudelft.jpacman.sprite.PacManSprites;
 import nl.tudelft.jpacman.ui.Action;
 import nl.tudelft.jpacman.ui.PacManUI;
 import nl.tudelft.jpacman.ui.PacManUiBuilder;
 
+import javax.swing.*;
+
 /**
  * Creates and launches the JPacMan UI.
- * 
- * @author Jeroen Roosen 
+ *
+ * @author Jeroen Roosen
  */
 public class Launcher {
 
@@ -33,6 +37,11 @@ public class Launcher {
 
 	private PacManUI pacManUI;
 	private Game game;
+
+	/**
+	 * boolean that is true if the two players game mode is enabled
+	 */
+	private boolean twoPlayers; // = false;
 
 	/**
 	 * @return The game object this launcher will start when {@link #launch()}
@@ -44,12 +53,12 @@ public class Launcher {
 
 	/**
 	 * Creates a new game using the level from {@link #makeLevel()}.
-	 * 
+	 *
 	 * @return a new Game.
 	 */
 	public Game makeGame() {
 		GameFactory gf = getGameFactory();
-		Level level = makeLevel();
+		Level level = makeTwoPlayersLevel();
 		return gf.createDoublePlayersGame(level);
 		//return gf.createSinglePlayerGame(level);
 	}
@@ -57,7 +66,7 @@ public class Launcher {
 	/**
 	 * Creates a new level. By default this method will use the map parser to
 	 * parse the default board stored in the <code>board.txt</code> resource.
-	 * 
+	 *
 	 * @return A new level.
 	 */
 	public Level makeLevel() {
@@ -71,11 +80,77 @@ public class Launcher {
 	}
 
 	/**
+	 * Creates a new level for two players. By default this method will use the map parser to
+	 * parse the default board stored in the <code>board.txt</code> resource.
+	 *
+	 * @param source the filename describing the level
+	 * @param ghostColor the color of the GhostPlayer
+	 * @return A new level.
+	 */
+	public Level makeLevelTwoPlayers(String source, GhostColor ghostColor){
+		MapParser parser = getMapParser(ghostColor);
+		try (InputStream boardStream = Launcher.class
+				.getResourceAsStream(source)) {
+			return parser.parseMap(boardStream);
+
+		} catch (IOException e) {
+			throw new PacmanConfigurationException("Unable to create level.", e);
+		}
+	}
+
+	private Level makeTwoPlayersLevel(){
+		Level _level;
+		twoPlayers = true;
+		Object[] options = {"Inky",
+				"Blinky",
+				"Clyde",
+				"Pinky"};
+		int chosenColor = JOptionPane.showOptionDialog(new Frame(),
+				"Choisissez un ghost", "",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				options,
+				options[2]);
+		switch (chosenColor){
+			case -1:
+				_level = makeLevelTwoPlayers("/board.txt", GhostColor.CYAN);
+				_level.setGhostColor(GhostColor.CYAN);
+				break;
+			case 0:
+				_level = makeLevelTwoPlayers("/board.txt", GhostColor.CYAN);
+				_level.setGhostColor(GhostColor.CYAN);
+				break;
+			case 1:
+				_level = makeLevelTwoPlayers("/board.txt", GhostColor.ORANGE);
+				_level.setGhostColor(GhostColor.ORANGE);
+				break;
+			case 2:
+				_level = makeLevelTwoPlayers("/board.txt", GhostColor.RED);
+				_level.setGhostColor(GhostColor.RED);
+				break;
+			case 3:
+				_level = makeLevelTwoPlayers("/board.txt", GhostColor.PINK);
+				_level.setGhostColor(GhostColor.PINK);
+				break;
+			default:
+				_level = makeLevelTwoPlayers("/board.txt", GhostColor.CYAN);
+				_level.setGhostColor(GhostColor.CYAN);
+				break;
+		}
+		return _level;
+	}
+
+	/**
 	 * @return A new map parser object using the factories from
 	 *         {@link #getLevelFactory()} and {@link #getBoardFactory()}.
 	 */
 	protected MapParser getMapParser() {
 		return new MapParser(getLevelFactory(), getBoardFactory());
+	}
+
+	protected MapParser getMapParser(GhostColor ghostColor){
+		return  new MapParser(getLevelFactory(), getBoardFactory(), ghostColor);
 	}
 
 	/**
@@ -124,7 +199,7 @@ public class Launcher {
 
 	/**
 	 * Adds key events UP, DOWN, LEFT and RIGHT to a game.
-	 * 
+	 *
 	 * @param builder
 	 *            The {@link PacManUiBuilder} that will provide the UI.
 	 * @param game

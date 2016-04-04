@@ -12,10 +12,7 @@ import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.BoardFactory;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.npc.NPC;
-import nl.tudelft.jpacman.npc.ghost.Ghost;
-import nl.tudelft.jpacman.npc.ghost.GhostColor;
-import nl.tudelft.jpacman.npc.ghost.Inky;
-import nl.tudelft.jpacman.npc.ghost.Pinky;
+import nl.tudelft.jpacman.npc.ghost.*;
 
 /**
  * Creates new {@link Level}s from text representations.
@@ -35,6 +32,29 @@ public class MapParser {
 	private final BoardFactory boardCreator;
 
 	/**
+	 * The ghost player color
+	 */
+	private GhostColor ghostColor;
+
+	/**
+	 * @return the class of this ghost
+	 */
+	public Class getGhostClass(){
+		switch (ghostColor){
+			case ORANGE:
+				return Clyde.class;
+			case CYAN:
+				return Inky.class;
+			case PINK:
+				return Pinky.class;
+			case RED:
+				return Blinky.class;
+			default:
+				return null;
+		}
+	}
+
+	/**
 	 * Creates a new map parser.
 	 * 
 	 * @param levelFactory
@@ -45,6 +65,12 @@ public class MapParser {
 	public MapParser(LevelFactory levelFactory, BoardFactory boardFactory) {
 		this.levelCreator = levelFactory;
 		this.boardCreator = boardFactory;
+	}
+
+	public MapParser(LevelFactory levelFactory, BoardFactory boardFactory, GhostColor ghostColor) {
+		this.levelCreator = levelFactory;
+		this.boardCreator = boardFactory;
+		this.ghostColor = ghostColor;
 	}
 
 	/**
@@ -81,8 +107,8 @@ public class MapParser {
 
 	private void makeGrid(char[][] map, int width, int height,
 			Square[][] grid, List<NPC> ghosts, List<Square> startPositions) {
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
 				char c = map[x][y];
 				addSquare(grid, ghosts, startPositions, x, y, c);
 			}
@@ -104,7 +130,7 @@ public class MapParser {
 			levelCreator.createPellet().occupy(pelletSquare);
 			break;
 		case 'G':
-			Square ghostSquare = makeGhostSquareDoublePlayers(ghosts, Inky.class, startPositions);// a remplacer par le fantome jouer par le joueur 2
+			Square ghostSquare = makeGhostSquareDoublePlayers(ghosts, getGhostClass(), startPositions);// a remplacer par le fantome jouer par le joueur 2
 																					// passer null pour ne pas retirer de ghost
 			//Square ghostSquare = makeGhostSquare(ghosts);
 			grid[x][y] = ghostSquare;

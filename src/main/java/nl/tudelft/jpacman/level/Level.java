@@ -15,6 +15,7 @@ import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.npc.NPC;
 import nl.tudelft.jpacman.npc.ghost.Blinky;
+import nl.tudelft.jpacman.npc.ghost.GhostColor;
 import nl.tudelft.jpacman.npc.ghost.Pinky;
 
 /**
@@ -76,6 +77,23 @@ public class Level {
 	 * The objects observing this level.
 	 */
 	private final List<LevelObserver> observers;
+
+	/**
+	 * The ghost color for the two players game mode.
+	 */
+	private GhostColor ghostColor = GhostColor.CYAN;
+
+	/**
+	 * @param _ghostColor
+	 *              Sets the new color of the ghost in the two players game mode
+	 */
+	public void setGhostColor(GhostColor _ghostColor) {
+		this.ghostColor = _ghostColor;
+	}
+
+	public GhostColor getGhostColor() {
+		return ghostColor;
+	}
 
 	/**
 	 * Creates a new level for the board.
