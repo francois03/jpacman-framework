@@ -130,9 +130,14 @@ public class MapParser {
 			levelCreator.createPellet().occupy(pelletSquare);
 			break;
 		case 'G':
-			Square ghostSquare = makeGhostSquareDoublePlayers(ghosts, getGhostClass(), startPositions);// a remplacer par le fantome jouer par le joueur 2
-																					// passer null pour ne pas retirer de ghost
-			//Square ghostSquare = makeGhostSquare(ghosts);
+			Square ghostSquare;
+			if(ghostColor != null) {
+				ghostSquare = makeGhostSquareDoublePlayers(ghosts, getGhostClass(), startPositions);// a remplacer par le fantome jouer par le joueur 2
+				// passer null pour ne pas retirer de ghost
+			}
+			else{
+				ghostSquare = makeGhostSquare(ghosts);
+			}
 			grid[x][y] = ghostSquare;
 			break;
 		case 'P':
