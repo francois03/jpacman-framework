@@ -132,8 +132,7 @@ public class MapParser {
 		case 'G':
 			Square ghostSquare;
 			if(ghostColor != null) {
-				ghostSquare = makeGhostSquareDoublePlayers(ghosts, getGhostClass(), startPositions);// a remplacer par le fantome jouer par le joueur 2
-				// passer null pour ne pas retirer de ghost
+				ghostSquare = makeGhostSquareDoublePlayers(ghosts, getGhostClass(), startPositions);
 			}
 			else{
 				ghostSquare = makeGhostSquare(ghosts);

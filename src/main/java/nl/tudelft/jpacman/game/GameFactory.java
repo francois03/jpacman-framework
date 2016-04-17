@@ -47,7 +47,7 @@ public class GameFactory {
 	 * @return A new double players game.
 	 */
 	public Game createDoublePlayersGame(Level level){
-		return new DoublePlayerGame(playerFact.createPacMan(), playerFact.createGhostPlayer(level.getGhostColor()), level);//remplacer par ghost sélectionner
+		return new DoublePlayerGame(playerFact.createPacMan(), playerFact.createGhostPlayer(level.getGhostColor()), level);
 	}
 
 	/**
